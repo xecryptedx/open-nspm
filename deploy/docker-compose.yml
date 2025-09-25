@@ -1,0 +1,46 @@
+version: "3.9"
+
+services:
+  backend:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile.backend
+    environment:
+      API_KEY: \${API_KEY:-dev-api-key}
+      DATABASE_URL: postgresql+psycopg://postgres:postgres@db:5432/opennspm
+      REDIS_URL: redis://redis:6379/0
+      FORTI_VERIFY_SSL: "false"
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - redis
+  worker:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile.backend
+    command: ["python", "-m", "app.workers"]
+    environment:
+      API_KEY: \${API_KEY:-dev-api-key}
+      DATABASE_URL: postgresql+psycopg://postgres:postgres@db:5432/opennspm
+      REDIS_URL: redis://redis:6379/0
+    depends_on:
+      - db
+      - redis
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: opennspm
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+
+volumes:
+  db_data: {}
