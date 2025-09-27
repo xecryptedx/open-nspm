@@ -1,0 +1,13 @@
+site_name: OpenNSPM
+site_url: https://example.com
+repo_url: https://github.com/example/open-nspm
+theme:
+  name: material
+  features:
+    - navigation.sections
+docs_dir: docs/docs
+nav:
+  - Overview: index.md
+  - Architecture: architecture.md
+  - API: api.md
+  - Developer Guide: developer.md
